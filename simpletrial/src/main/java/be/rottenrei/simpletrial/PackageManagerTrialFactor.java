@@ -10,12 +10,18 @@ import android.content.pm.PackageManager;
  */
 public class PackageManagerTrialFactor extends TrialFactor {
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long readTimestamp(Context context) {
         try {
-            return context.getPackageManager()
+            long currentTime = System.currentTimeMillis();
+            long firstInstallTime = context.getPackageManager()
                     .getPackageInfo(context.getPackageName(), 0).firstInstallTime;
+            if (firstInstallTime > currentTime)
+                return TRIAL_INVALID_TIMESTAMP; // Invalidate trial
+            return firstInstallTime;
         } catch (PackageManager.NameNotFoundException e) {
             // should never happen
             return NOT_AVAILABLE_TIMESTAMP;

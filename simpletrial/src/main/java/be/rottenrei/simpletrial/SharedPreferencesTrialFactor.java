@@ -3,6 +3,8 @@ package be.rottenrei.simpletrial;
 import android.app.backup.BackupManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Base64;
+
 
 /**
  * Stores and reads the trial timestamp from a shared preferences file and optionally triggers a
@@ -49,7 +51,9 @@ public class SharedPreferencesTrialFactor extends TrialFactor {
     public void persistTimestamp(long timestamp, Context context) {
         SharedPreferences preferences = context
                 .getSharedPreferences(config.preferenceFile, Context.MODE_PRIVATE);
-        preferences.edit().putLong(config.preferenceName, timestamp).apply();
+        String timeStr = Long.toString(timestamp);
+        String timeEncoded = Base64.encodeToString(timeStr.getBytes(), Base64.DEFAULT);
+        preferences.edit().putString(config.preferenceName, timeEncoded).apply();
 
         if (config.shouldTriggerBackup) {
             new BackupManager(context).dataChanged();
@@ -63,7 +67,14 @@ public class SharedPreferencesTrialFactor extends TrialFactor {
     public long readTimestamp(Context context) {
         SharedPreferences preferences = context
                 .getSharedPreferences(config.preferenceFile, Context.MODE_PRIVATE);
-        return preferences.getLong(config.preferenceName, NOT_AVAILABLE_TIMESTAMP);
+        String notAvailable = Long.toString(NOT_AVAILABLE_TIMESTAMP);
+        String timeEncoded = preferences.getString(config.preferenceName, notAvailable);
+        long timestamp;
+        if (notAvailable.equals(timeEncoded))
+            timestamp = NOT_AVAILABLE_TIMESTAMP;
+        else
+            timestamp = Long.parseLong(new String(Base64.decode(timeEncoded, Base64.DEFAULT)));
+        return timestamp;
     }
 
     /**

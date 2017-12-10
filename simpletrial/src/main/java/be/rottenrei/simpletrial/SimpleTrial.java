@@ -87,7 +87,7 @@ public class SimpleTrial {
      * Returns true if the trial period has ended.
      */
     public boolean isTrialPeriodFinished() {
-        return new Date().getTime() >= trialStartTimestamp + trialDurationInMilliseconds;
+        return System.currentTimeMillis() >= trialStartTimestamp + trialDurationInMilliseconds;
     }
 
     /**
@@ -128,7 +128,7 @@ public class SimpleTrial {
             }
         }
 
-        long currentTimestamp = new Date().getTime();
+        long currentTimestamp = System.currentTimeMillis();
         if (timestamp > currentTimestamp) {
             // fall back to the current time
             return currentTimestamp;
@@ -151,6 +151,10 @@ public class SimpleTrial {
          * The factors to use.
          */
         private List<TrialFactor> factors = new ArrayList<>();
+        /**
+         * The length of the trial period in days.
+         */
+        private int trialDurationInDays = DEFAULT_TRIAL_DURATION_IN_DAYS;
 
         /**
          * @see Config
@@ -158,13 +162,10 @@ public class SimpleTrial {
         public Config() {
             factors.add(new PackageManagerTrialFactor());
             factors.add(
-                    new SharedPreferencesTrialFactor(new SharedPreferencesTrialFactor.Config()));
+                    new SharedPreferencesTrialFactor(new SharedPreferencesTrialFactor.Config()
+                            .preferenceName("a")  // Make it confusing to an user looking at the prefs
+                            .preferenceFile("a")));
         }
-
-        /**
-         * The length of the trial period in days.
-         */
-        private int trialDurationInDays = DEFAULT_TRIAL_DURATION_IN_DAYS;
 
         /**
          * Changes the factors to use in the trial.
