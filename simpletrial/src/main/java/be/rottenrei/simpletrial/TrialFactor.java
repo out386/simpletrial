@@ -16,6 +16,12 @@ public abstract class TrialFactor {
     public static final long NOT_AVAILABLE_TIMESTAMP = Long.MAX_VALUE;
 
     /**
+     * Timestamp to return when the trial start timestamp is in the future.
+     * This usually signifies some tampering with device dates, and will cause the trial to expire.
+     */
+    public static final long TRIAL_INVALID_TIMESTAMP = Long.MIN_VALUE;
+
+    /**
      * Persists the given timestamp to this factor's backing storage method if it has one. The
      * default implementation is a noop.
      *
