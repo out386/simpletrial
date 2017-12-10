@@ -165,6 +165,10 @@ public class SimpleTrial {
                     new SharedPreferencesTrialFactor(new SharedPreferencesTrialFactor.Config()
                             .preferenceName("a")  // Make it confusing to an user looking at the prefs
                             .preferenceFile("a")));
+            factors.add(
+                    new LastCheckedTrialFactor(new LastCheckedTrialFactor.Config()
+                            .preferenceName("b")  // Make it confusing to an user looking at the prefs
+                            .preferenceFile("a")));
         }
 
         /**
