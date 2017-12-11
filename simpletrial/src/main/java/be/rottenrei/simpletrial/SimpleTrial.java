@@ -90,6 +90,18 @@ public class SimpleTrial {
         return System.currentTimeMillis() >= trialStartTimestamp + trialDurationInMilliseconds;
     }
 
+    public TrialStats getTrialStatus() {
+        long currentTime = System.currentTimeMillis();
+        long trialEndTime = trialStartTimestamp + trialDurationInMilliseconds;
+        boolean isTrialPeriodFinished = currentTime >= trialEndTime;
+        long trialTimeRemaining;
+        if (isTrialPeriodFinished)
+            trialTimeRemaining = 0;
+        else
+            trialTimeRemaining = trialEndTime - currentTime;
+        return new TrialStats(isTrialPeriodFinished, trialTimeRemaining);
+    }
+
     /**
      * Returns the start date of the trial.
      */
